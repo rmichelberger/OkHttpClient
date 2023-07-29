@@ -1,11 +1,20 @@
 import Foundation
 
 final public class OkHttpClient {
-    public init() {print("OkHttpClient")}
+    private let decoder: DataDecoder
+    private let logger: RequestLogger?
+    
+    public init(decoder: DataDecoder = JSONDecoder(), logger: RequestLogger? = nil) {
+        self.decoder = decoder
+        self.logger = logger
+    }
     
     public func execute<T: Decodable>(request: URLRequest) async throws -> T {
+        if let logger {
+            logger.log(request: request)
+        }
         let data = try await URLSession.shared.data(for: request).0
-        return try JSONDecoder().decode(T.self, from: data)
+        return try decoder.decode(T.self, from: data)
     }
 }
 
@@ -24,6 +33,8 @@ public extension URLSession {
         }
     }
 }
+
+extension JSONDecoder: DataDecoder {}
 
 #if canImport(RetroSwift)
 import RetroSwift
