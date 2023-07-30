@@ -2,9 +2,9 @@ import Foundation
 
 final public class OkHttpClient {
     private let decoder: DataDecoder
-    private let logger: RequestLogger?
+    private let logger: Logger?
     
-    public init(decoder: DataDecoder = JSONDecoder(), logger: RequestLogger? = nil) {
+    public init(decoder: DataDecoder = JSONDecoder(), logger: Logger? = nil) {
         self.decoder = decoder
         self.logger = logger
     }
@@ -13,8 +13,12 @@ final public class OkHttpClient {
         if let logger {
             logger.log(request: request)
         }
-        let data = try await URLSession.shared.data(for: request).0
-        return try decoder.decode(T.self, from: data)
+        let result = try await URLSession.shared.data(for: request)
+        let data = result.0
+        if let logger, let response = result.1 as? HTTPURLResponse {
+            logger.log(response: response, data: data)
+        }
+            return try decoder.decode(T.self, from: data)
     }
 }
 
