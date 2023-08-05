@@ -22,7 +22,7 @@ final public class OkHttpClient {
     }
 }
 
-@available(iOS, deprecated: 15.0, message: "Use the built-in API instead")
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 public extension URLSession {
     func data(from url: URL) async throws -> (Data, URLResponse) {
         try await withCheckedThrowingContinuation { continuation in

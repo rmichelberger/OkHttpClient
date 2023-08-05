@@ -35,15 +35,19 @@ public class SimpleLogger: Logger {
         let urlString = response.url?.absoluteString
         let components = URLComponents(string: urlString ?? "")
         
-        let path = components?.path ?? ""
-        let query = components?.query ?? ""
-        
         var responseLog = "\n<---------- Response ----------\n"
         if let urlString {
             responseLog += "\(urlString)\n\n"
         }
         
-        responseLog += "HTTP \(response.statusCode) \(path)?\(query)\n"
+        responseLog += "HTTP \(response.statusCode)"
+        if let path = components?.path {
+            responseLog += " \(path)"
+        }
+        if let query = components?.query {
+            responseLog += "?\(query)"
+        }
+        responseLog += "\n"
         if let host = components?.host{
             responseLog += "Host: \(host)\n"
         }
