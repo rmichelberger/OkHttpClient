@@ -5,27 +5,27 @@ public class SimpleLogger: Logger {
     
     public func log(request: URLRequest) {
 #if DEBUG
-        var result = "---------- Request ---------->"
+        var result = "---------- Request ---------->\n"
         
         if let method = request.httpMethod {
-            result += "\(method)\n"
+            result += "\(method) "
         }
-        
-        if let headers = request.allHTTPHeaderFields, !headers.isEmpty {
-            result += "Headers\n"
-            for (header, value) in headers {
-                result += "\(header): \(value)\n"
-            }
-        }
-        
-        if let body = request.httpBody, !body.isEmpty, let string = String(data: body, encoding: .utf8), !string.isEmpty {
-            result += "Body:\n\(string)\n"
-        }
-        
         if let url = request.url {
             result += url.absoluteString
         }
+
+        if let headers = request.allHTTPHeaderFields, !headers.isEmpty {
+            result += "\nHeaders\n"
+            for (name, value) in headers {
+                result += "\(name): \(value)\n"
+            }
+        }
         
+        if let body = request.httpBody {
+            let string = String(data: body, encoding: .utf8) ?? "Can't render body; not UTF-8 encoded"
+            result += "\nBody:\n\(string)\n"
+        }
+                
         print(result + "\n------------------------->\n")
 #endif
     }
@@ -35,7 +35,7 @@ public class SimpleLogger: Logger {
         let urlString = response.url?.absoluteString
         let components = URLComponents(string: urlString ?? "")
         
-        var responseLog = "\n<---------- Response ----------\n"
+        var responseLog = "<---------- Response ----------\n"
         if let urlString {
             responseLog += "\(urlString)\n\n"
         }
@@ -51,14 +51,14 @@ public class SimpleLogger: Logger {
         if let host = components?.host{
             responseLog += "Host: \(host)\n"
         }
-        for (key,value) in response.allHeaderFields {
-            responseLog += "\(key): \(value)\n"
+        for (name,value) in response.allHeaderFields {
+            responseLog += "\(name): \(value)\n"
         }
         if let body = data {
-            let bodyString = String(data: body, encoding: .utf8) ?? "Can't render body; not utf8 encoded";
+            let bodyString = String(data: body, encoding: .utf8) ?? "Can't render body; not UTF-8 encoded"
             responseLog += "\n\(bodyString)\n"
         }
-        responseLog += "<------------------------\n";
+        responseLog += "\n<------------------------\n"
         print(responseLog)
 #endif
     }
