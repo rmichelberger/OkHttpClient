@@ -52,6 +52,10 @@ let decoder = Decoder()
 let client = OkHttpClient(decoder: decoder)
 ```
 
+## RetroSwift
+
+OkHttpClient is best used together with [RetroSwift](https://github.com/rmichelberger/RetroSwift).
+
 ## TODO
 
 - [ ] Improve unit test coverage.
